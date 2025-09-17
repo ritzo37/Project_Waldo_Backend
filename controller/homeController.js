@@ -28,7 +28,7 @@ async function handleStop(req, res) {
   if (req.session.start) {
     const timeNow = Date.now();
     const timeElasped = (timeNow - req.session.start) / 1000;
-    req.session.destroy();
+    await req.session.destroy();
     res.status(200).json(timeElasped);
   } else {
     res.status(403).json({ message: "You haven't even started the game yet!" });

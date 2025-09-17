@@ -10,7 +10,13 @@ const pgPool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  })
+);
+
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(
