@@ -25,7 +25,7 @@ app.use(
       pool: pgPool,
       createTableIfMissing: true,
     }),
-    secret: "Cat",
+    secret: process.env.COOKIE_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {

@@ -22,4 +22,85 @@ async function getItem(insertedItem) {
   return data[0];
 }
 
-module.exports = { addItem, getItem };
+async function getUser(username) {
+  const data = await prisma.user.findUnique({
+    where: {
+      username: username,
+    },
+  });
+  return data;
+}
+
+async function getUserById(userId) {
+  return await prisma.user.findUnique({
+    where: {
+      userId,
+    },
+  });
+}
+
+async function addUser(username, password) {
+  await prisma.user.create({
+    data: {
+      username,
+      password,
+    },
+  });
+}
+
+async function addScore(userId, score) {
+  if (!userId) {
+    await prisma.score.create({
+      data: {
+        score,
+      },
+    });
+  } else {
+    await prisma.score.create({
+      data: {
+        userId: userId,
+        score: score,
+      },
+    });
+  }
+}
+
+async function updateScore(userId, score) {
+  return await prisma.score.update({
+    data: {
+      score,
+    },
+    where: {
+      userId,
+    },
+  });
+}
+
+async function getScore(userId) {
+  return await prisma.score.findUnique({
+    where: {
+      userId,
+    },
+  });
+}
+
+async function getScores() {
+  const data = await prisma.score.findMany({
+    orderBy: {
+      score: "asc",
+    },
+  });
+  return data;
+}
+
+module.exports = {
+  addItem,
+  getItem,
+  getUser,
+  addUser,
+  getUserById,
+  addScore,
+  updateScore,
+  getScore,
+  getScores,
+};

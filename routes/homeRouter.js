@@ -1,10 +1,21 @@
 const express = require("express");
 const homeController = require("../controller/homeController");
-const homeRouter = express.Router();
-homeRouter.get("/", (req, res) => {
-  res.send("<h1>Hello</h1>");
-});
+const homeRouter = express.Router({ mergeParams: true });
+const validateUserNameAndPassword = require("../errorValidation");
+const middlewares = require("../middlewares");
+
 homeRouter.post("/cordsCheck/:itemName", homeController.handleCords);
 homeRouter.get("/start", homeController.handleStart);
-homeRouter.get("/stop", homeController.handleStop);
+homeRouter.get("/stop", middlewares.isAuthenticated, homeController.handleStop);
+homeRouter.post(
+  "/sign-up",
+  validateUserNameAndPassword,
+  homeController.handleSignUp
+);
+homeRouter.post("/log-in", homeController.handleLogin);
+homeRouter.get("/authRoute", middlewares.isAuthenticated, (req, res) => {
+  res.json("authenitcation works!");
+});
+homeRouter.get("/allScores", homeController.handleGetScores);
+
 module.exports = homeRouter;
