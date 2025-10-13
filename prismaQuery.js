@@ -22,7 +22,7 @@ async function getItem(insertedItem) {
   return data[0];
 }
 
-async function getUser(username) {
+async function getUserByUsername(username) {
   const data = await prisma.user.findUnique({
     where: {
       username: username,
@@ -48,25 +48,16 @@ async function addUser(username, password) {
   });
 }
 
-async function addScore(userId, score) {
-  if (!userId) {
-    await prisma.score.create({
-      data: {
-        score,
-      },
-    });
-  } else {
-    await prisma.score.create({
-      data: {
-        userId: userId,
-        score: score,
-      },
-    });
-  }
+async function addTempUser(timeElasped) {
+  return await prisma.tempUser.create({
+    data: {
+      score: timeElasped,
+    },
+  });
 }
 
-async function updateScore(userId, score) {
-  return await prisma.score.update({
+async function updateUserScore(userId, score) {
+  return await prisma.user.update({
     data: {
       score,
     },
@@ -76,16 +67,34 @@ async function updateScore(userId, score) {
   });
 }
 
-async function getScore(userId) {
-  return await prisma.score.findUnique({
+async function updateTempUserScore(tempUserId, score) {
+  await prisma.tempUser.update({
+    data: {
+      score,
+    },
+    where: {
+      tempUserId,
+    },
+  });
+}
+
+async function getUserScore(userId) {
+  return await prisma.user.findUnique({
     where: {
       userId,
     },
   });
 }
 
-async function getScores() {
-  const data = await prisma.score.findMany({
+async function getTempUserScore(tempUserId) {
+  return await prisma.tempUser.findUnique({
+    where: {
+      tempUserId,
+    },
+  });
+}
+async function getUserScores() {
+  const data = await prisma.user.findMany({
     orderBy: {
       score: "asc",
     },
@@ -93,14 +102,36 @@ async function getScores() {
   return data;
 }
 
+async function getTempScores() {
+  const data = await prisma.tempUser.findMany({
+    orderBy: {
+      score: "asc",
+    },
+  });
+  return data;
+}
+
+async function deleteTempUserById(tempUserId) {
+  await prisma.tempUser.delete({
+    where: {
+      tempUserId,
+    },
+  });
+}
+
 module.exports = {
   addItem,
   getItem,
-  getUser,
-  addUser,
   getUserById,
-  addScore,
-  updateScore,
-  getScore,
-  getScores,
+  getUserByUsername,
+  addUser,
+  addTempUser,
+  getUserById,
+  updateUserScore,
+  updateTempUserScore,
+  getUserScore,
+  getTempUserScore,
+  getUserScores,
+  getTempScores,
+  deleteTempUserById,
 };

@@ -6,7 +6,7 @@ const validateUserNameAndPassword = [
     .notEmpty()
     .withMessage("Please don't leave the username empty")
     .custom(async (value) => {
-      const check = await db.getUser(value);
+      const check = await db.getUserByUsername(value);
       if (check) {
         throw new Error("Username already exists!");
       }

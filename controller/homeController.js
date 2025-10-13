@@ -33,19 +33,28 @@ async function handleStop(req, res) {
     const timeNow = Date.now();
     const timeElasped = (timeNow - req.session.start) / 1000;
     const userId = res.locals.userId;
-    if (!userId) {
-      await db.addScore(userId, timeElasped);
-    } else {
-      const currScore = await db.getScore(userId);
-      if (!currScore) {
-        await db.addScore(userId, timeElasped);
+    if (userId) {
+      const currUser = await db.getUserById(userId);
+      if (!currUser.score) {
+        await db.updateUserScore(userId, timeElasped);
       } else {
-        if (currScore.score > timeElasped) {
-          await db.updateScore(userId, timeElasped);
+        if (currUser.score > timeElasped) {
+          await db.updateUserScore(userId, timeElasped);
         }
       }
+    } else {
+      if (req.session.tempUserId) {
+        const currTempUser = await db.getTempUserScore(req.session.tempUserId);
+        if (currTempUser.score > timeElasped) {
+          await db.updateTempUserScore(req.session.tempUserId, timeElasped);
+        }
+      } else {
+        const tempUser = await db.addTempUser(timeElasped);
+        const tempUserId = tempUser.tempUserId;
+        req.session.tempUserId = tempUserId;
+      }
     }
-    await req.session.destroy();
+    req.session.start = null;
     res.status(200).json(timeElasped);
   } else {
     res.status(403).json({ message: "You haven't even started the game yet!" });
@@ -67,7 +76,6 @@ async function handleSignUp(req, res) {
       message: "Sucessfully Created The User",
     });
   } catch (err) {
-    console.log(err);
     res.status(409).json({
       message: "There already exists a user with the same name",
     });
@@ -76,7 +84,7 @@ async function handleSignUp(req, res) {
 
 async function handleLogin(req, res) {
   const { username, password } = req.body;
-  const user = await db.getUser(username);
+  const user = await db.getUserByUsername(username);
   if (!user) {
     res.status(404).json({
       message: "The user doesn't exist!",
@@ -90,6 +98,20 @@ async function handleLogin(req, res) {
       });
     } else {
       const userId = user.userId;
+      const tempUserId = req.session.tempUserId;
+      if (tempUserId) {
+        const tempUser = await db.getTempUserScore(tempUserId);
+        const user = await db.getUserById(userId);
+        if (user.score) {
+          if (user.score > tempUser.score) {
+            await db.updateUserScore(userId, tempUser.score);
+          }
+        } else {
+          db.updateUserScore(userId, tempUser.score);
+        }
+        await db.deleteTempUserById(tempUserId);
+        req.session.tempUserId = null;
+      }
       jwt.sign(
         { userId },
         process.env.SECRET_KEY,
@@ -110,9 +132,22 @@ async function handleLogin(req, res) {
   }
 }
 
-async function handleGetScores(req, res) {
+async function handleUserScores(req, res) {
   try {
-    const data = await db.getScores();
+    const data = await db.getUserScores();
+    res.status(200).json({
+      data,
+    });
+  } catch (e) {
+    res.status(500).json({
+      message: "Something bad happened please try again!",
+    });
+  }
+}
+
+async function handleTempScores(req, res) {
+  try {
+    const data = await db.getTempScores();
     res.status(200).json({
       data,
     });
@@ -129,5 +164,6 @@ module.exports = {
   handleStop,
   handleSignUp,
   handleLogin,
-  handleGetScores,
+  handleUserScores,
+  handleTempScores,
 };
