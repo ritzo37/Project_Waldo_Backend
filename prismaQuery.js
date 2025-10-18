@@ -105,6 +105,7 @@ async function getUserScores() {
     select: {
       username: true,
       score: true,
+      userId: true,
     },
   });
   return data;

@@ -135,8 +135,22 @@ async function handleLogin(req, res) {
 async function handleUserScores(req, res) {
   try {
     const data = await db.getUserScores();
+    const userId = res.locals.userId;
+    let dataToSend = data;
+    if (userId) {
+      dataToSend = data.map((currItem) => {
+        if (currItem.userId === userId) {
+          return {
+            ...currItem,
+            isLoggedIn: true,
+          };
+        } else {
+          return currItem;
+        }
+      });
+    }
     res.status(200).json({
-      data,
+      data: dataToSend,
     });
   } catch (e) {
     res.status(500).json({

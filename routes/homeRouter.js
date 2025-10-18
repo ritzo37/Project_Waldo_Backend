@@ -17,7 +17,11 @@ homeRouter.post("/log-in", homeController.handleLogin);
 homeRouter.get("/authRoute", middlewares.isAuthenticated, (req, res) => {
   res.json("authenitcation works!");
 });
-homeRouter.get("/allUserScores", homeController.handleUserScores);
+homeRouter.get(
+  "/allUserScores",
+  middlewares.isAuthenticated,
+  homeController.handleUserScores
+);
 homeRouter.get("/allTempScores", homeController.handleTempScores);
 
 module.exports = homeRouter;
