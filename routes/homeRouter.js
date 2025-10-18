@@ -12,6 +12,7 @@ homeRouter.post(
   validateUserNameAndPassword,
   homeController.handleSignUp
 );
+homeRouter.get("/getItems", homeController.handleGetItems);
 homeRouter.post("/log-in", homeController.handleLogin);
 homeRouter.get("/authRoute", middlewares.isAuthenticated, (req, res) => {
   res.json("authenitcation works!");

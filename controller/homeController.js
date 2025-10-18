@@ -158,6 +158,26 @@ async function handleTempScores(req, res) {
   }
 }
 
+async function handleGetItems(req, res) {
+  try {
+    const data = await db.getItems();
+    let dataToSend = [];
+    for (let i = data.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [data[i], data[j]] = [data[j], data[i]];
+    }
+    for (let i = 0; i < 3; i++) dataToSend.push(data[i]);
+    res.status(200).json({
+      dataToSend,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      message: "Something bad happened please try again!",
+    });
+  }
+}
+
 module.exports = {
   handleCords,
   handleStart,
@@ -166,4 +186,5 @@ module.exports = {
   handleLogin,
   handleUserScores,
   handleTempScores,
+  handleGetItems,
 };

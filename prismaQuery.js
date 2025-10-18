@@ -22,6 +22,10 @@ async function getItem(insertedItem) {
   return data[0];
 }
 
+async function getItems() {
+  return prisma.items.findMany();
+}
+
 async function getUserByUsername(username) {
   const data = await prisma.user.findUnique({
     where: {
@@ -138,4 +142,5 @@ module.exports = {
   getUserScores,
   getTempScores,
   deleteTempUserById,
+  getItems,
 };
