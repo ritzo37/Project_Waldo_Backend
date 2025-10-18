@@ -44,7 +44,7 @@ async function handleStop(req, res) {
       }
     } else {
       if (req.session.tempUserId) {
-        const currTempUser = await db.getTempUserScore(req.session.tempUserId);
+        const currTempUser = await db.getTempUser(req.session.tempUserId);
         if (currTempUser.score > timeElasped) {
           await db.updateTempUserScore(req.session.tempUserId, timeElasped);
         }
@@ -100,7 +100,7 @@ async function handleLogin(req, res) {
       const userId = user.userId;
       const tempUserId = req.session.tempUserId;
       if (tempUserId) {
-        const tempUser = await db.getTempUserScore(tempUserId);
+        const tempUser = await db.getTempUser(tempUserId);
         const user = await db.getUserById(userId);
         if (user.score) {
           if (user.score > tempUser.score) {

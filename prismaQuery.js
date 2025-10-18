@@ -86,7 +86,7 @@ async function getUserScore(userId) {
   });
 }
 
-async function getTempUserScore(tempUserId) {
+async function getTempUser(tempUserId) {
   return await prisma.tempUser.findUnique({
     where: {
       tempUserId,
@@ -97,6 +97,10 @@ async function getUserScores() {
   const data = await prisma.user.findMany({
     orderBy: {
       score: "asc",
+    },
+    select: {
+      username: true,
+      score: true,
     },
   });
   return data;
@@ -130,7 +134,7 @@ module.exports = {
   updateUserScore,
   updateTempUserScore,
   getUserScore,
-  getTempUserScore,
+  getTempUser,
   getUserScores,
   getTempScores,
   deleteTempUserById,
