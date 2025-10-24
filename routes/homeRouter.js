@@ -23,5 +23,7 @@ homeRouter.get(
   homeController.handleUserScores
 );
 homeRouter.get("/allTempScores", homeController.handleTempScores);
+homeRouter.get("/logout", homeController.handleLogout);
+homeRouter.get("/login-status", homeController.handleLoginStatus);
 
 module.exports = homeRouter;

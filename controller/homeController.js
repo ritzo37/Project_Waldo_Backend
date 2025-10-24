@@ -115,16 +115,21 @@ async function handleLogin(req, res) {
       jwt.sign(
         { userId },
         process.env.SECRET_KEY,
-        { algorithm: "HS256" },
+        { algorithm: "HS256", expiresIn: "7d" },
         function (err, token) {
           if (err) {
-            res.status(500).json({
+            return res.status(500).json({
               message: "Something bad happened please try again :(",
             });
           }
+          res.cookie("token", token, {
+            httpOnly: true,
+            maxAge: 604800000, // 7days
+            sameSite: "strict",
+            path: "/",
+          });
           res.status(200).json({
             message: "Correct info is sent by you !",
-            token: token,
           });
         }
       );
@@ -192,6 +197,31 @@ async function handleGetItems(req, res) {
   }
 }
 
+async function handleLogout(req, res) {
+  const token = req.cookies.token;
+  if (!token) {
+    res.status(401).json({
+      message: "Please login first!",
+    });
+  } else {
+    res.cookie("token", token, {
+      httpOnly: true,
+      maxAge: new Date(0), // 7days
+      sameSite: "strict",
+      path: "/",
+    });
+    res.status(200).json("Logged out!");
+  }
+}
+
+async function handleLoginStatus(req, res) {
+  const token = req.cookies.token;
+  if (token) {
+    res.status(200).json("You are logged in !");
+  } else {
+    res.status(401).json("Nope you aren't logged in!");
+  }
+}
 module.exports = {
   handleCords,
   handleStart,
@@ -201,4 +231,6 @@ module.exports = {
   handleUserScores,
   handleTempScores,
   handleGetItems,
+  handleLogout,
+  handleLoginStatus,
 };

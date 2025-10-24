@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const app = express();
+const cookieParser = require("cookie-parser");
 const homeRouter = require("./routes/homeRouter");
 const { Pool } = require("pg");
 const pgSession = require("connect-pg-simple")(session);
@@ -19,6 +20,7 @@ app.use(
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(cookieParser());
 app.use(
   session({
     store: new pgSession({
