@@ -11,10 +11,10 @@ function isAuthenticated(req, res, next) {
       } else {
         const { userId } = decoded;
         res.locals.userId = userId;
-        next();
       }
     });
   }
+  next();
 }
 
 module.exports = {

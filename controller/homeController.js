@@ -206,7 +206,7 @@ async function handleLogout(req, res) {
   } else {
     res.cookie("token", token, {
       httpOnly: true,
-      maxAge: new Date(0), // 7days
+      maxAge: new Date(0),
       sameSite: "strict",
       path: "/",
     });
