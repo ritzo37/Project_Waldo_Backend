@@ -125,7 +125,7 @@ async function handleLogin(req, res) {
           res.cookie("token", token, {
             httpOnly: true,
             maxAge: 604800000, // 7days
-            sameSite: "strict",
+            sameSite: "lax",
             path: "/",
           });
           res.status(200).json({
@@ -207,7 +207,7 @@ async function handleLogout(req, res) {
     res.cookie("token", token, {
       httpOnly: true,
       maxAge: new Date(0),
-      sameSite: "strict",
+      sameSite: "lax",
       path: "/",
     });
     res.status(200).json("Logged out!");
