@@ -25,5 +25,9 @@ homeRouter.get(
 homeRouter.get("/allTempScores", homeController.handleTempScores);
 homeRouter.get("/logout", homeController.handleLogout);
 homeRouter.get("/login-status", homeController.handleLoginStatus);
-
+homeRouter.get("/", (req, res) => {
+  res.json(
+    "Hey! The server is up. Please open the frontend repo and access the app."
+  );
+});
 module.exports = homeRouter;
