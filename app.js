@@ -11,6 +11,8 @@ const pgPool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
+app.set("trust proxy", 1);
+
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
