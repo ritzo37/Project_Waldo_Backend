@@ -25,7 +25,9 @@ async function handleCords(req, res) {
 async function handleStart(req, res) {
   const currTime = Date.now();
   if (!req.session.start) req.session.start = currTime;
-  res.status(200).json({ message: "Game has started" });
+  res
+    .status(200)
+    .json({ message: "Game has started", startTime: req.session.start });
 }
 
 async function handleStop(req, res) {
