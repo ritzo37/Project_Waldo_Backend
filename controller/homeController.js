@@ -129,7 +129,8 @@ async function handleLogin(req, res) {
             maxAge: 604800000, // 7days
             sameSite: "none",
             path: "/",
-            secure: "true",
+            secure: true,
+            partitioned: true,
           });
           res.status(200).json({
             message: "Correct info is sent by you !",
@@ -212,7 +213,8 @@ async function handleLogout(req, res) {
       expires: new Date(0),
       sameSite: "none",
       path: "/",
-      secure: "true",
+      secure: true,
+      partitioned: true,
     });
     res.status(200).json("Logged out!");
   }
