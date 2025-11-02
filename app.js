@@ -35,6 +35,7 @@ app.use(
       secure: true,
       sameSite: "none",
       partitioned: true,
+      path: "/",
     },
   })
 );
